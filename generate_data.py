@@ -27,7 +27,7 @@ if not os.path.exists(label_dir):
 
 
 for file in files:
-    json_file = 'label' + file[3:-15] + 'gtFine_polygons.json'
+    json_file = 'label' + file[3:-4] + '.json' 
     json_object = json.load(open(json_file))
     h = json_object['imgHeight']
     w = json_object['imgWidth']

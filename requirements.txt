@@ -1,6 +1,6 @@
 torchvision==0.2.1
 numpy==1.15.0
-torch==0.4.0
+torch
 wget==3.2
 Pillow==5.1.0
 tensorboardX==1.2
