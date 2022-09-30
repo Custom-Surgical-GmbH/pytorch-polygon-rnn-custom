@@ -140,6 +140,7 @@ if __name__ == '__main__':
 
     net = PolygonNet(load_vgg=False)
     # net = nn.DataParallel(net, device_ids=devices)
+    net = nn.DataParallel(net)
     net.load_state_dict(torch.load(config['model']))
     # net.cuda()
     print('Loading completed!')
