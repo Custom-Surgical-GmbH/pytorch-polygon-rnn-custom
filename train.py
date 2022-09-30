@@ -5,6 +5,7 @@ from tensorboardX import SummaryWriter
 from torch import nn
 from torch import optim
 from torch.autograd import Variable
+import torch
 
 from config_tools import get_config
 from data import load_data
@@ -13,22 +14,22 @@ from test import test
 
 
 def train(config, pretrained=None):
-    devices = config['gpu_id']
+    # devices = config['gpu_id']
     batch_size = config['batch_size']
     lr = config['lr']
     log_dir = config['log_dir']
     prefix = config['prefix']
     num = config['num']
 
-    print('Using gpus: {}'.format(devices))
-    torch.cuda.set_device(devices[0])
+    # print('Using gpus: {}'.format(devices))
+    # torch.cuda.set_device(devices[0])
 
     Dataloader = load_data(num, 'train', 60, batch_size)
     len_dl = len(Dataloader)
     print(len_dl)
 
     net = PolygonNet()
-    net = nn.DataParallel(net, device_ids=devices)
+    # net = nn.DataParallel(net, device_ids=devices)
 
     if pretrained:
         net.load_state_dict(torch.load(pretrained))
@@ -37,18 +38,18 @@ def train(config, pretrained=None):
 
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=lr)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
-                                               milestones=[4000, 100000],
-                                               gamma=0.1)
+    # scheduler = optim.lr_scheduler.MultiStepLR(optimizer,
+    #                                            milestones=[4000, 100000],
+    #                                            gamma=0.1)
     writer = SummaryWriter(log_dir)
 
-    dtype = torch.cuda.FloatTensor
-    dtype_t = torch.cuda.LongTensor
+    dtype = torch.FloatTensor
+    dtype_t = torch.LongTensor
 
     epoch_r = int(300000 / len_dl)
     for epoch in range(epoch_r):
         for step, data in enumerate(Dataloader):
-            scheduler.step()
+            # scheduler.step()
             x = Variable(data[0].type(dtype))
             x1 = Variable(data[1].type(dtype))
             x2 = Variable(data[2].type(dtype))
@@ -69,7 +70,7 @@ def train(config, pretrained=None):
             correct = (target == result_index).type(dtype).sum().item()
             acc = correct * 1.0 / target.shape[0]
 
-            #        scheduler.step(loss)
+            # scheduler.step(loss)
             optimizer.step()
 
             writer.add_scalar('train/loss', loss, epoch * len_dl + step)
