@@ -48,7 +48,8 @@ def test(net, dataset, num=float('inf')):
     count = 0
     files = glob('img/{}/*/*.png'.format(dataset))
     for ind, file in enumerate(files):
-        json_file = 'label' + file[3:-15] + 'gtFine_polygons.json'
+        # json_file = 'label' + file[3:-15] + 'gtFine_polygons.json'
+        json_file = 'label' + file[3:-4] + '.json' 
         json_object = json.load(open(json_file))
         h = json_object['imgHeight']
         w = json_object['imgWidth']
