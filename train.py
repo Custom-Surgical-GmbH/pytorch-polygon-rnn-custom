@@ -33,7 +33,7 @@ def train(config, pretrained=None):
 
     if pretrained:
         net.load_state_dict(torch.load(pretrained))
-    net.cuda()
+    # net.cuda()
     print('Loading completed!')
 
     loss_function = nn.CrossEntropyLoss()
