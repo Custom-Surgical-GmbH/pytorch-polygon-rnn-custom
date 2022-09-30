@@ -22,8 +22,10 @@ def validate(net, Dataloader):
     :return:
     '''
 
-    dtype = torch.cuda.FloatTensor
-    dtype_t = torch.cuda.LongTensor
+    # dtype = torch.cuda.FloatTensor
+    dtype = torch.FloatTensor
+    # dtype_t = torch.cuda.LongTensor
+    dtype_t = torch.LongTensor
 
     dir_name = 'save_img/validate/'
     if not os.path.exists(dir_name):
@@ -84,19 +86,19 @@ if __name__ == '__main__':
     config_file = config_from_args.pop('config_file')
     config = get_config('val', config_from_args, config_file)
 
-    devices = config['gpu_id']
+    # devices = config['gpu_id']
     batch_size = config['batch_size']
     num = config['num']
     dataset = config['dataset']
     model = config['model']
 
-    print('gpus: {}'.format(devices))
-    torch.cuda.set_device(devices[0])
+    # print('gpus: {}'.format(devices))
+    # torch.cuda.set_device(devices[0])
 
     net = PolygonNet(load_vgg=False)
-    net = nn.DataParallel(net, device_ids=devices)
+    # net = nn.DataParallel(net, device_ids=devices)
     net.load_state_dict(torch.load(model))
-    net.cuda()
+    # net.cuda()
     print('Loading completed!')
 
     Dataloader = load_data(num, dataset, 600, batch_size)
