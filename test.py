@@ -73,7 +73,7 @@ def test(net, dataset, num=float('inf')):
                 xx = xx.unsqueeze(0).type(dtype)
 
                 xx = Variable(xx)
-                re = net.module.test(xx, 60)
+                re = net.test(xx, 60)
                 labels_p = re.cpu().numpy()[0]
                 vertices1 = []
                 vertices2 = []
@@ -140,7 +140,6 @@ if __name__ == '__main__':
 
     net = PolygonNet(load_vgg=False)
     # net = nn.DataParallel(net, device_ids=devices)
-    net = nn.DataParallel(net)
     net.load_state_dict(torch.load(config['model']))
     # net.cuda()
     print('Loading completed!')

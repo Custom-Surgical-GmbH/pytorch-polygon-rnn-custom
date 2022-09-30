@@ -39,7 +39,7 @@ def validate(net, Dataloader):
     for step, data in enumerate(Dataloader):
         labels = data[4].numpy()
         xx = Variable(data[0].type(dtype))
-        re = net.module.test(xx, 60)
+        re = net.test(xx, 60)
         for i in range(len(re)):
             labels_p = re.cpu().numpy()[i]
             vertices1 = label2vertex(labels_p)
@@ -97,7 +97,6 @@ if __name__ == '__main__':
 
     net = PolygonNet(load_vgg=False)
     # net = nn.DataParallel(net, device_ids=devices)
-    net = nn.DataParallel(net)
     net.load_state_dict(torch.load(model))
     # net.cuda()
     print('Loading completed!')
