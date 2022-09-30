@@ -20,6 +20,7 @@ def train(config, pretrained=None):
     log_dir = config['log_dir']
     prefix = config['prefix']
     num = config['num']
+    epoch_r = config['epochs']
 
     # print('Using gpus: {}'.format(devices))
     # torch.cuda.set_device(devices[0])
@@ -46,7 +47,7 @@ def train(config, pretrained=None):
     dtype = torch.FloatTensor
     dtype_t = torch.LongTensor
 
-    epoch_r = int(300000 / len_dl)
+    # epoch_r = int(300000 / len_dl)
     for epoch in range(epoch_r):
         for step, data in enumerate(Dataloader):
             # scheduler.step()
@@ -94,9 +95,11 @@ def train(config, pretrained=None):
         print('iou score on training set:{}'.format(train_iou))
         print('iou score on test set:{}'.format(val_iou))
 
-        if epoch % 5 == 0 and len_dl > 200:
-            torch.save(net.state_dict(),
-                       prefix + str(epoch) + '_' + str(num) + '.pth')
+        # if epoch % 5 == 0 and len_dl > 200:
+        #     torch.save(net.state_dict(),
+        #                prefix + str(epoch) + '_' + str(num) + '.pth')
+        torch.save(net.state_dict(),
+                    prefix + str(epoch) + '_' + str(num) + '.pth')
 
     writer.close()
 
@@ -110,6 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('--num', '-n', type=int, help='Number of Instances')
     parser.add_argument('--lr', type=float, help='Learning Rate')
     parser.add_argument('--prefix', type=str, help='Model Prefix')
+    parser.add_argument('--epochs', type=int, help='Number of Epochs')
     parser.add_argument('--pretrained', '-p', type=str, help='Pretrained '
                                                              'Model Location')
     parser.add_argument('--config', dest='config_file', help='Config File')
