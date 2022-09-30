@@ -82,8 +82,10 @@ class PolygonNet(nn.Module):
         self.convlayer3 = _make_basic(512, 128, 3, 1, 1)
         self.convlayer4 = _make_basic(512, 128, 3, 1, 1)
         self.convlayer5 = _make_basic(512, 128, 3, 1, 1)
-        self.poollayer = nn.MaxPool2d(2, 2).cuda()
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear').cuda()
+        # self.poollayer = nn.MaxPool2d(2, 2).cuda()
+        self.poollayer = nn.MaxPool2d(2, 2)
+        # self.upsample = nn.Upsample(scale_factor=2, mode='bilinear').cuda()
+        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear')
         self.convlstm = ConvLSTM(input_size=(28, 28),
                                  input_dim=131,
                                  hidden_dim=[32, 8],
@@ -162,7 +164,8 @@ class PolygonNet(nn.Module):
         output = self.convlayer5(output)
         output = output.unsqueeze(1)
         output = output.repeat(1, length_s, 1, 1, 1)
-        padding_f = torch.zeros([bs, 1, 1, 28, 28]).cuda()
+        # padding_f = torch.zeros([bs, 1, 1, 28, 28]).cuda()
+        padding_f = torch.zeros([bs, 1, 1, 28, 28])
 
         input_f = first[:, :-3].view(-1, 1, 28, 28).unsqueeze(1).repeat(1,
                                                                         length_s - 1,
@@ -187,7 +190,8 @@ class PolygonNet(nn.Module):
 
     def test(self, input_data1, len_s):
         bs = input_data1.shape[0]
-        result = torch.zeros([bs, len_s]).cuda()
+        # result = torch.zeros([bs, len_s]).cuda()
+        result = torch.zeros([bs, len_s])
         output1 = self.model1(input_data1)
         output11 = self.poollayer(output1)
         output11 = self.convlayer1(output11)
@@ -201,9 +205,12 @@ class PolygonNet(nn.Module):
         output = torch.cat([output11, output22, output33, output44], dim=1)
         feature = self.convlayer5(output)
 
-        padding_f = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
-        input_s = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
-        input_t = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
+        # padding_f = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
+        padding_f = torch.zeros([bs, 1, 1, 28, 28]).float()
+        # input_s = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
+        input_s = torch.zeros([bs, 1, 1, 28, 28]).float()
+        # input_t = torch.zeros([bs, 1, 1, 28, 28]).float().cuda()
+        input_t = torch.zeros([bs, 1, 1, 28, 28]).float()
 
         output = torch.cat([feature.unsqueeze(1), padding_f, input_s, input_t],
                            dim=2)
@@ -211,9 +218,11 @@ class PolygonNet(nn.Module):
         output, hidden1 = self.convlstm(output)
         output = output[-1]
         output = output.contiguous().view(bs, 1, -1)
-        second = torch.zeros([bs, 1, 28 * 28 + 3]).cuda()
+        # second = torch.zeros([bs, 1, 28 * 28 + 3]).cuda()
+        second = torch.zeros([bs, 1, 28 * 28 + 3])
         second[:, 0, 28 * 28 + 1] = 1
-        third = torch.zeros([bs, 1, 28 * 28 + 3]).cuda()
+        # third = torch.zeros([bs, 1, 28 * 28 + 3]).cuda()
+        third = torch.zeros([bs, 1, 28 * 28 + 3])
         third[:, 0, 28 * 28 + 2] = 1
         output = torch.cat([output, second, third], dim=2)
 
